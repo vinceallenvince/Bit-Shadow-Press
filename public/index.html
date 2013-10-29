@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="css/main.css" />
+    <script src='scripts/imageuploader.js' type="text/javascript"></script>
+    <script src='scripts/press.js' type="text/javascript"></script>
+  </head>
+  <body>
+    <script src='http://localhost:1337/socket.io/socket.io.js'></script>
+    <script type="text/javascript">
+      var socket = io.connect('http://localhost:1337');
+      socket.on('dataSet', function(data) {
+        alert('total frames saved: ' + data.frames.length);
+      });
+
+      /*socket.emit('formInit', {
+        'document': document
+      });*/
+
+    </script>
+    <canvas id='theCanvas' width='1000px' height='1000px'></canvas>
+
+    <section class='formContainer'>
+      <form id='imageForm'>
+        <fieldset>
+          <label for='originX'>OriginX</label>
+          <select id='imageOriginX' name='originX'>
+            <option value='left'>left</option>
+            <option value='center' selected>center</option>
+            <option value='right'>right</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <label for='originY'>OriginY</label>
+          <select id='imageOriginY' name='originY'>
+            <option value='top'>top</option>
+            <option value='center'>center</option>
+            <option value='bottom' selected>bottom</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>Resolution</label>
+          <select id='imageResolution' name='resolution'>
+            <option value='1'>1:1</option>
+            <option value='2'>1:2</option>
+            <option value='4'>1:4</option>
+            <option value='8' selected>1:8</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='file'>Image file(s)</label>
+          <input type='file' name='file' id='imageFileInput' multiple />
+        </fieldset>
+      </form>
+    </section>
+
+    <script type="text/javascript">
+
+      var theCanvas = document.getElementById('theCanvas');
+
+     var press = new Press({
+        context: theCanvas.getContext('2d'),
+        debug: true
+      });
+
+      var imageUploader = new ImageUploader({
+        inputId: 'imageFileInput'
+      }, function(path, originX, originY, resolution, index, totalFiles) {
+          press.init({
+            src: path,
+            originX: originX,
+            originY: originY,
+            resolution: parseInt(resolution, 10),
+            index: index,
+            totalFiles: totalFiles,
+            socket: socket
+          });
+      });
+
+      imageUploader.init();
+
+
+    </script>
+
+  </body>
+</html>
