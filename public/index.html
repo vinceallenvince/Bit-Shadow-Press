@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <link rel='stylesheet' href='css/main.css' />
+  </head>
+  <body>
+
+    <canvas id='theCanvas' width='1000px' height='1000px'></canvas>
+
+    <section class='formContainer'>
+      <form id='imageForm'>
+        <fieldset>
+          <label for='originX'>OriginX</label>
+          <select id='imageOriginX' name='originX'>
+            <option value='left'>left</option>
+            <option value='center' selected>center</option>
+            <option value='right'>right</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <label for='originY'>OriginY</label>
+          <select id='imageOriginY' name='originY'>
+            <option value='top'>top</option>
+            <option value='center'>center</option>
+            <option value='bottom' selected>bottom</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>Resolution</label>
+          <select id='imageResolution' name='resolution'>
+            <option value='1'>1:1</option>
+            <option value='2'>1:2</option>
+            <option value='4'>1:4</option>
+            <option value='8' selected>1:8</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='file'>Image file(s)</label>
+          <input type='file' name='file' id='imageFileInput' disabled="disabled" multiple />
+        </fieldset>
+      </form>
+    </section>
+
+    <script src='scripts/fsupload.js'></script>
+    <script src='scripts/pixelpress.js'></script>
+    <script src='http://localhost:1337/socket.io/socket.io.js'></script>
+    <script type="text/javascript">
+      
+      var socket = io.connect('http://localhost:1337'),
+          fileInput = document.getElementById('imageFileInput');
+      
+      socket.on('connected', function() {
+
+        var theCanvas = document.getElementById('theCanvas');
+        
+        var pixelPress = new PixelPress({
+          context: theCanvas.getContext('2d'),
+          debug: true
+        });
+        
+        fileInput.removeAttribute('disabled');
+        
+        var fsUpload = new FSUpload(
+          fileInput,
+          function(result) {
+            
+            var originX = document.querySelector('#imageOriginX').value,
+              originY = document.querySelector('#imageOriginY').value,
+              resolution = document.querySelector('#imageResolution').value,
+              fileURL = result.fileURL,
+              totalFiles = result.totalFiles;
+
+            pixelPress.init({
+              src: fileURL,
+              originX: originX,
+              originY: originY,
+              resolution: parseInt(resolution, 10),
+              index: result.index,
+              totalFiles: totalFiles,
+              callback: function(result) {
+                socket.emit('setData', result);
+              }
+            });
+            
+        });
+        fsUpload.init();
+      });
+      
+      socket.on('dataSet', function(data) {
+        console.log('total frames saved: ' + data);
+        
+        // create Bit-Shadow-Anim here
+        
+      });
+
+    </script>
+  
+  </body>
+</html>
