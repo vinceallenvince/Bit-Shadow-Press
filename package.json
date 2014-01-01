@@ -1,7 +1,7 @@
 {
   "name": "BitShadowPress",
-  "version": "0.0.1",
-  "description": "Bit-Shadow Press",
+  "version": "0.0.2",
+  "description": "BitShadowPress",
   "main": "app.js",
   "scripts": {
     "test": "grunt test"

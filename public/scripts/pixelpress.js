@@ -1,10 +1,10 @@
 /*global document, exports */
 /**
- * Creates a new Press.
+ * Creates a new PixelPress.
  *
  * @constructor
  */
-function Press(opt_options) {
+function PixelPress(opt_options) {
 
   var options = opt_options, img;
 
@@ -17,9 +17,9 @@ function Press(opt_options) {
 
 }
 
-Press.prototype.name = 'Press';
+PixelPress.prototype.name = 'Press';
 
-Press.prototype.init = function(fileProps) {
+PixelPress.prototype.init = function(fileProps) {
 
   var me = this,
       img = new Image();
@@ -30,7 +30,7 @@ Press.prototype.init = function(fileProps) {
   this.resolution = parseInt(fileProps.resolution, 10);
   this.index = fileProps.index;
   this.totalFiles = fileProps.totalFiles;
-  this.socket = fileProps.socket;
+  this.callback = fileProps.callback;
 
   img.src = this.src;
   img.onload = function() {
@@ -38,7 +38,7 @@ Press.prototype.init = function(fileProps) {
   };
 };
 
-Press.prototype.getImageData = function(img, resolution) {
+PixelPress.prototype.getImageData = function(img, resolution) {
 
   // clear canvas first
   this.context.clearRect(0, 0, 1000, 1000);
@@ -54,7 +54,7 @@ Press.prototype.getImageData = function(img, resolution) {
   }
 };
 
-Press.prototype.processImageData = function(imgData, resolution) {
+PixelPress.prototype.processImageData = function(imgData, resolution) {
 
   var x, y, red, green, blue, alpha, str,
       originOffsetX, originOffsetY, items = [];
@@ -116,17 +116,14 @@ Press.prototype.processImageData = function(imgData, resolution) {
   });
 
   if (this.frames.length === this.totalFiles) {
-    console.log(this.frames);
-    if (this.socket) {
-      this.socket.emit('setData', {
-        frames: this.frames
-      })
+    if (this.callback) {
+      this.callback.call(this, this.frames);
     }
   }
 
 };
 
-Press.prototype.log = function(msg) {
+PixelPress.prototype.log = function(msg) {
   if (this.debug && console) {
     console.log(msg);
   }

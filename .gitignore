@@ -4,3 +4,4 @@ node_modules
 #### FILES ####
 *.DS_Store
 *.swp
+public/frames.js

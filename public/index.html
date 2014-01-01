@@ -1,22 +1,9 @@
 <html>
   <head>
-    <link rel="stylesheet" href="css/main.css" />
-    <script src='scripts/imageuploader.js' type="text/javascript"></script>
-    <script src='scripts/press.js' type="text/javascript"></script>
+    <link rel='stylesheet' href='css/main.css' />
   </head>
   <body>
-    <script src='http://localhost:1337/socket.io/socket.io.js'></script>
-    <script type="text/javascript">
-      var socket = io.connect('http://localhost:1337');
-      socket.on('dataSet', function(data) {
-        alert('total frames saved: ' + data.frames.length);
-      });
 
-      /*socket.emit('formInit', {
-        'document': document
-      });*/
-
-    </script>
     <canvas id='theCanvas' width='1000px' height='1000px'></canvas>
 
     <section class='formContainer'>
@@ -50,38 +37,64 @@
 
         <fieldset>
           <label for='file'>Image file(s)</label>
-          <input type='file' name='file' id='imageFileInput' multiple />
+          <input type='file' name='file' id='imageFileInput' disabled="disabled" multiple />
         </fieldset>
       </form>
     </section>
 
+    <script src='scripts/fsupload.js'></script>
+    <script src='scripts/pixelpress.js'></script>
+    <script src='http://localhost:1337/socket.io/socket.io.js'></script>
     <script type="text/javascript">
+      
+      var socket = io.connect('http://localhost:1337'),
+          fileInput = document.getElementById('imageFileInput');
+      
+      socket.on('connected', function() {
 
-      var theCanvas = document.getElementById('theCanvas');
+        var theCanvas = document.getElementById('theCanvas');
+        
+        var pixelPress = new PixelPress({
+          context: theCanvas.getContext('2d'),
+          debug: true
+        });
+        
+        fileInput.removeAttribute('disabled');
+        
+        var fsUpload = new FSUpload(
+          fileInput,
+          function(result) {
+            
+            var originX = document.querySelector('#imageOriginX').value,
+              originY = document.querySelector('#imageOriginY').value,
+              resolution = document.querySelector('#imageResolution').value,
+              fileURL = result.fileURL,
+              totalFiles = result.totalFiles;
 
-     var press = new Press({
-        context: theCanvas.getContext('2d'),
-        debug: true
+            pixelPress.init({
+              src: fileURL,
+              originX: originX,
+              originY: originY,
+              resolution: parseInt(resolution, 10),
+              index: result.index,
+              totalFiles: totalFiles,
+              callback: function(result) {
+                socket.emit('setData', result);
+              }
+            });
+            
+        });
+        fsUpload.init();
       });
-
-      var imageUploader = new ImageUploader({
-        inputId: 'imageFileInput'
-      }, function(path, originX, originY, resolution, index, totalFiles) {
-          press.init({
-            src: path,
-            originX: originX,
-            originY: originY,
-            resolution: parseInt(resolution, 10),
-            index: index,
-            totalFiles: totalFiles,
-            socket: socket
-          });
+      
+      socket.on('dataSet', function(data) {
+        console.log('total frames saved: ' + data);
+        
+        // create Bit-Shadow-Anim here
+        
       });
-
-      imageUploader.init();
-
 
     </script>
-
+  
   </body>
 </html>
