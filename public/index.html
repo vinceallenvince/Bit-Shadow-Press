@@ -1,6 +1,8 @@
 <html>
   <head>
     <link rel='stylesheet' href='css/main.css' />
+    <link rel='stylesheet' href='css/BitShadowMachine.min.css' />
+    <script src='scripts/BitShadowMachine.js'></script>
   </head>
   <body>
 
@@ -42,29 +44,31 @@
       </form>
     </section>
 
+    <div id='worldA'></div>
+
     <script src='scripts/fsupload.js'></script>
     <script src='scripts/pixelpress.js'></script>
     <script src='http://localhost:1337/socket.io/socket.io.js'></script>
     <script type="text/javascript">
-      
+
       var socket = io.connect('http://localhost:1337'),
           fileInput = document.getElementById('imageFileInput');
-      
+
       socket.on('connected', function() {
 
         var theCanvas = document.getElementById('theCanvas');
-        
+
         var pixelPress = new PixelPress({
           context: theCanvas.getContext('2d'),
           debug: true
         });
-        
+
         fileInput.removeAttribute('disabled');
-        
+
         var fsUpload = new FSUpload(
           fileInput,
           function(result) {
-            
+
             var originX = document.querySelector('#imageOriginX').value,
               originY = document.querySelector('#imageOriginY').value,
               resolution = document.querySelector('#imageResolution').value,
@@ -82,19 +86,40 @@
                 socket.emit('setData', result);
               }
             });
-            
+
         });
         fsUpload.init();
       });
-      
+
       socket.on('dataSet', function(data) {
-        console.log('total frames saved: ' + data);
-        
+        console.log('total frames saved: ' + data.length);
+console.log(data);
         // create Bit-Shadow-Anim here
-        
+
+        var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
+          width: 960,
+          height: 540,
+          resolution: 4,
+          backgroundColor: [0, 0, 0]
+        });
+
+        /**
+         * Create a new BitShadowMachine system.
+         */
+        BitShadowMachine.System.init(function() {
+
+          var i, max;
+
+          var anim = this.add('Anim', {
+            location: new BitShadowMachine.Vector(worldA.width / 2, worldA.height),
+            frames: data
+          });
+
+        });
+
       });
 
     </script>
-  
+
   </body>
 </html>
