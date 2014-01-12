@@ -1,4 +1,4 @@
-/* reset styles
+  /* reset styles
 --------------------------------------------- */
 
 html, body, div, span, applet, object, iframe,
@@ -35,17 +35,38 @@ body {
   top: -5000px; left: -5000px;
 }
 
-.formContainer {
+.container {
   width: 90%;
-  margin: 1em auto;
+  margin: 0 auto;
+  border-bottom: 1px solid #eee;
+}
+
+.title {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  padding: 10px 20px 10px 10px;
+  font-size: 2em;
+}
+
+.container .title-hilite {
+  color: #e5ad40;
+}
+
+.instructions {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  padding: 10px 0 10px 0;
+  color: #88939a;
 }
 
 form fieldset {
-  margin: 0 0 10px 0;
-  padding: 0 0 10px 0;
+  display: inline-block;
+  margin: 0;
+  padding: 10px 0 10px 10px;
   font-size: 14px;
-  border-bottom: 1px solid #eee;
-  }
+}
 form fieldset.form-actions {
   margin: 0 0 0 20%;
   padding: 0;
@@ -55,9 +76,9 @@ form fieldset.check {
   padding-left: 20%;
   }
 form fieldset label {
-  float: left;
+  float: none;
   width: 20%;
-  margin: 4px 0 5px 0;
+  margin: 4px 4px 5px 0;
   font-weight: bold;
   }
 form fieldset.check label {
@@ -154,3 +175,7 @@ form input[type="submit"]:active {
     box-sizing: border-box;
     }
   }
+
+h1, h2, h3, h4, h5, label {
+  font-family: "ff-din-web",sans-serif;
+}

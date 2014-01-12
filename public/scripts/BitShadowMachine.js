@@ -1,8 +1,8 @@
-/*! BitShadowMachine v2.0.9 - 2013-12-31 04:12:37
- *  Vince Allen
- *  Brooklyn, NY
- *  vince@vinceallen.com
- *  @vinceallenvince
+/*! BitShadowMachine v2.0.10 - 2014-01-12 03:01:19 
+ *  Vince Allen 
+ *  Brooklyn, NY 
+ *  vince@vinceallen.com 
+ *  @vinceallenvince 
  *  License: MIT */
 
 var BitShadowMachine = {}, exports = BitShadowMachine;
@@ -2087,10 +2087,6 @@ Anim.prototype.step = function() {
     this.advanceFrame();
     this.frameCount = 0;
   }
-
-  this.frameDuration = BitShadowMachine.Utils.map(BitShadowMachine.System.mouse.location.y,
-      0, this.world.height, 5, 0);
-
 };
 
 /*

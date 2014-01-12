@@ -83,14 +83,14 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
       break;
   }
 
-  // dividing by four b/c image data is separated into 4 components. (red, green, blue, alpha)
+  // dividing by four b/c image data is separated into four components. (red, green, blue, alpha)
   this.log('Processing image ' + (this.frames.length + 1) + ' of ' + this.totalFiles);
   this.log('Processing ' + (imgData.data.length / 4) + ' pixels.');
   this.log('Breaking into chunks of ' + resolution + ' X ' + resolution +
       ' pixels in a ' + (imgData.width / resolution) + ' X ' + (imgData.height / resolution) + ' grid of ' +
       ((imgData.width / resolution) * (imgData.height / resolution)) + ' blocks.', this.debug);
 
-  for (y = 0; y < imgData.height; y += resolution) {
+  for (y = 0; y < imgData.height; y += resolution) { // offsetting the array index by 1to avoid bleeding
     for (x = 0; x < imgData.width; x += resolution) {
 
       red = imgData.data[((y * (imgData.width * 4)) + (x * 4)) + 0];
@@ -101,10 +101,10 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
       // do not add transparent blocks
       if (alpha !== 0 || (x + originOffsetX === 0 && y + originOffsetY === 0)) { // always add the first pixel block
         items.push({
-          x: Math.floor((x + originOffsetX) / (resolution * 0.5)),
-          y: Math.floor((y + originOffsetY) / (resolution * 0.5)),
+          x: Math.floor((x + originOffsetX) / resolution),
+          y: Math.floor((y + originOffsetY) / resolution),
           color: [red, green, blue],
-          opacity: alpha,
+          opacity: this.map(alpha, 0, 255, 0, 1),
           scale: 1
         });
       }
@@ -117,7 +117,7 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
 
   if (this.frames.length === this.totalFiles) {
     if (this.callback) {
-      this.callback.call(this, this.frames);
+      this.callback.call(this, this.frames, imgData.width, imgData.height);
     }
   }
 
@@ -127,4 +127,21 @@ PixelPress.prototype.log = function(msg) {
   if (this.debug && console) {
     console.log(msg);
   }
+};
+
+/**
+ * Re-maps a number from one range to another.
+ *
+ * @function map
+ * @memberof System
+ * @param {number} value The value to be converted.
+ * @param {number} min1 Lower bound of the value's current range.
+ * @param {number} max1 Upper bound of the value's current range.
+ * @param {number} min2 Lower bound of the value's target range.
+ * @param {number} max2 Upper bound of the value's target range.
+ * @returns {number} A number.
+ */
+PixelPress.prototype.map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
+  var unitratio = (value - min1) / (max1 - min1);
+  return (unitratio * (max2 - min2)) + min2;
 };

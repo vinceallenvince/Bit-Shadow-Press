@@ -2,28 +2,35 @@
   <head>
     <link rel='stylesheet' href='css/main.css' />
     <link rel='stylesheet' href='css/BitShadowMachine.min.css' />
-    <script src='scripts/BitShadowMachine.js'></script>
+    <link rel='stylesheet' href='css/BitShadowPress.css' />
+    <script src='scripts/BitShadowMachine.min.js'></script>
+    <script type="text/javascript" src="//use.typekit.net/jmz6fpn.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   </head>
   <body>
 
     <canvas id='theCanvas' width='1000px' height='1000px'></canvas>
-
-    <section class='formContainer'>
+    
+    <section class='container'>
+      <h1 class='title'>Bit-Shadow <span class='title-hilite'>Press</span></h1>
+      <div class='instructions'>Upload a series of images and convert them to a Bit-Shadow Machine animation.</div>
+    </section>
+    <section class='container'>
       <form id='imageForm'>
         <fieldset>
           <label for='originX'>OriginX</label>
           <select id='imageOriginX' name='originX'>
-            <option value='left'>left</option>
-            <option value='center' selected>center</option>
+            <option value='left' selected>left</option>
+            <option value='center'>center</option>
             <option value='right'>right</option>
           </select>
         </fieldset>
         <fieldset>
           <label for='originY'>OriginY</label>
           <select id='imageOriginY' name='originY'>
-            <option value='top'>top</option>
+            <option value='top' selected>top</option>
             <option value='center'>center</option>
-            <option value='bottom' selected>bottom</option>
+            <option value='bottom'>bottom</option>
           </select>
         </fieldset>
 
@@ -34,6 +41,7 @@
             <option value='2'>1:2</option>
             <option value='4'>1:4</option>
             <option value='8' selected>1:8</option>
+            <option value='16'>1:16</option>
           </select>
         </fieldset>
 
@@ -52,7 +60,8 @@
     <script type="text/javascript">
 
       var socket = io.connect('http://localhost:1337'),
-          fileInput = document.getElementById('imageFileInput');
+          fileInput = document.getElementById('imageFileInput'),
+          resolution, worldWidth, worldHeight;
 
       socket.on('connected', function() {
 
@@ -62,7 +71,7 @@
           context: theCanvas.getContext('2d'),
           debug: true
         });
-
+        
         fileInput.removeAttribute('disabled');
 
         var fsUpload = new FSUpload(
@@ -71,9 +80,10 @@
 
             var originX = document.querySelector('#imageOriginX').value,
               originY = document.querySelector('#imageOriginY').value,
-              resolution = document.querySelector('#imageResolution').value,
               fileURL = result.fileURL,
               totalFiles = result.totalFiles;
+            
+            resolution = document.querySelector('#imageResolution').value;
 
             pixelPress.init({
               src: fileURL,
@@ -82,8 +92,10 @@
               resolution: parseInt(resolution, 10),
               index: result.index,
               totalFiles: totalFiles,
-              callback: function(result) {
+              callback: function(result, width, height) {
                 socket.emit('setData', result);
+                worldWidth = width;
+                worldHeight = height;
               }
             });
 
@@ -92,15 +104,15 @@
       });
 
       socket.on('dataSet', function(data) {
-        console.log('total frames saved: ' + data.length);
-console.log(data);
+
         // create Bit-Shadow-Anim here
 
         var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
-          width: 960,
-          height: 540,
-          resolution: 4,
-          backgroundColor: [0, 0, 0]
+          width: worldWidth,
+          height: worldHeight,
+          resolution: resolution,
+          backgroundColor: [0, 0, 0],
+          noMenu: true
         });
 
         /**
@@ -111,11 +123,15 @@ console.log(data);
           var i, max;
 
           var anim = this.add('Anim', {
-            location: new BitShadowMachine.Vector(worldA.width / 2, worldA.height),
+            location: new BitShadowMachine.Vector(1, 1),
             frames: data
           });
 
-        });
+          /*this.add('AnimUnit', {
+            location: new BitShadowMachine.Vector(1, 1)
+          });*/
+          
+        }, worldA);
 
       });
 
