@@ -13,7 +13,7 @@ function PixelPress(opt_options) {
   this.origin = options.origin || 'center';
   this.src = options.src || null;
   this.debug = !!options.debug;
-  this.frames = [];
+  this.frames = null;
 
 }
 
@@ -31,6 +31,7 @@ PixelPress.prototype.init = function(fileProps) {
   this.index = fileProps.index;
   this.totalFiles = fileProps.totalFiles;
   this.callback = fileProps.callback;
+  this.frames = [];
 
   img.src = this.src;
   img.onload = function() {
@@ -90,7 +91,7 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
       ' pixels in a ' + (imgData.width / resolution) + ' X ' + (imgData.height / resolution) + ' grid of ' +
       ((imgData.width / resolution) * (imgData.height / resolution)) + ' blocks.', this.debug);
 
-  for (y = 0; y < imgData.height; y += resolution) { // offsetting the array index by 1to avoid bleeding
+  for (y = 0; y < imgData.height; y += resolution) {
     for (x = 0; x < imgData.width; x += resolution) {
 
       red = imgData.data[((y * (imgData.width * 4)) + (x * 4)) + 0];
