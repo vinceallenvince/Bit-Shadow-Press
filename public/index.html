@@ -1,37 +1,80 @@
 <html>
   <head>
     <link rel='stylesheet' href='css/main.css' />
+    <link rel='stylesheet' href='css/BitShadowMachine.min.css' />
+    <link rel='stylesheet' href='css/BitShadowPress.css' />
+    <script src='scripts/BitShadowMachine.js'></script>
+    <script type="text/javascript" src="//use.typekit.net/jmz6fpn.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   </head>
   <body>
 
     <canvas id='theCanvas' width='1000px' height='1000px'></canvas>
 
-    <section class='formContainer'>
+    <section class='container'>
+      <h1 class='title'>Bit-Shadow <span class='title-hilite'>Press</span></h1>
+      <div class='instructions'>Upload a series of images and convert them to a Bit-Shadow Machine animation.</div>
+    </section>
+    <section class='container'>
       <form id='imageForm'>
         <fieldset>
           <label for='originX'>OriginX</label>
           <select id='imageOriginX' name='originX'>
-            <option value='left'>left</option>
-            <option value='center' selected>center</option>
+            <option value='left' selected>left</option>
+            <option value='center'>center</option>
             <option value='right'>right</option>
           </select>
         </fieldset>
         <fieldset>
           <label for='originY'>OriginY</label>
           <select id='imageOriginY' name='originY'>
-            <option value='top'>top</option>
+            <option value='top' selected>top</option>
             <option value='center'>center</option>
-            <option value='bottom' selected>bottom</option>
+            <option value='bottom'>bottom</option>
           </select>
         </fieldset>
 
         <fieldset>
           <label for='origin'>Resolution</label>
           <select id='imageResolution' name='resolution'>
-            <option value='1'>1:1</option>
             <option value='2'>1:2</option>
             <option value='4'>1:4</option>
             <option value='8' selected>1:8</option>
+            <option value='16'>1:16</option>
+            <option value='32'>1:32</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>R</label>
+          <select id='bgColorRed' name='bgColorRed'>
+            <option value='10'>10</option>
+            <option value='100' selected>100</option>
+            <option value='150'>150</option>
+            <option value='200'>200</option>
+            <option value='255'>255</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>G</label>
+          <select id='bgColorGreen' name='bgColorGreen'>
+            <option value='10'>10</option>
+            <option value='100'>100</option>
+            <option value='150' selected>150</option>
+            <option value='200'>200</option>
+            <option value='255'>255</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>B</label>
+          <select id='bgColorBlue' name='bgColorBlue'>
+            <option value='10'>10</option>
+            <option value='100'>100</option>
+            <option value='150'>150</option>
+            <option value='200' selected>200</option>
+            <option value='255'>255</option>
           </select>
         </fieldset>
 
@@ -42,34 +85,82 @@
       </form>
     </section>
 
+    <section class='container'>
+      <fieldset class='vertical-center'>
+        <label id='frameRateLabel' for='frameRate' class='label disabled'>Frame rate</label>
+        <input id='frameRateSlider'
+               class='rate-slider'
+               type='range'
+               min='0'
+               max='30'
+               step='1' 
+               value='3'
+               disabled='disabled'/>
+      </fieldset>
+    </section>
+    
+    <div id='bitShadowContainer'></div>
+    
     <script src='scripts/fsupload.js'></script>
     <script src='scripts/pixelpress.js'></script>
     <script src='http://localhost:1337/socket.io/socket.io.js'></script>
     <script type="text/javascript">
-      
+
       var socket = io.connect('http://localhost:1337'),
-          fileInput = document.getElementById('imageFileInput');
+          fileInput = document.getElementById('imageFileInput'),
+          bitShadowContainer = document.getElementById('bitShadowContainer'),
+          frameRateLabel = document.getElementById('frameRateLabel'),
+          frameRateSlider = document.getElementById('frameRateSlider'),
+          resolution, worldWidth, worldHeight, anim = {};
+      
+      var decreaseFrameDuration = function() {
+        if (anim.frameDuration - 1 > -1) {
+          anim.frameDuration--;
+        }
+      };
+
+      var increaseFrameDuration = function() {
+        if (anim.frameDuration + 1 < 100) {
+          anim.frameDuration++;
+        }
+      };
+      
+      var handleKeyUp = function(e) {
+        switch(e.keyCode) {
+          case 38:
+            decreaseFrameDuration();
+            break;
+          case 40:
+            increaseFrameDuration();
+            break;                
+        }
+      };
+      
+      var handleSliderChange = function(e) {
+        anim.frameDuration = e.target.value;
+      };
       
       socket.on('connected', function() {
 
         var theCanvas = document.getElementById('theCanvas');
-        
+
         var pixelPress = new PixelPress({
           context: theCanvas.getContext('2d'),
           debug: true
         });
-        
+
         fileInput.removeAttribute('disabled');
-        
+
         var fsUpload = new FSUpload(
           fileInput,
           function(result) {
-            
+
             var originX = document.querySelector('#imageOriginX').value,
               originY = document.querySelector('#imageOriginY').value,
-              resolution = document.querySelector('#imageResolution').value,
               fileURL = result.fileURL,
               totalFiles = result.totalFiles;
+
+            resolution = document.querySelector('#imageResolution').value;
 
             pixelPress.init({
               src: fileURL,
@@ -78,23 +169,66 @@
               resolution: parseInt(resolution, 10),
               index: result.index,
               totalFiles: totalFiles,
-              callback: function(result) {
+              callback: function(result, width, height) {
                 socket.emit('setData', result);
+                worldWidth = width;
+                worldHeight = height;
               }
             });
-            
+
         });
         fsUpload.init();
       });
-      
+
       socket.on('dataSet', function(data) {
-        console.log('total frames saved: ' + data);
+              
+        // check if an animation already exists
+        if (BitShadowMachine.System.firstWorld()) {
+          // if not, destroy the existing system
+          // this should remove the world element
+          BitShadowMachine.System._destroySystem();
+        }
         
-        // create Bit-Shadow-Anim here
+        // create the world container
+        var worldEl = document.createElement('div');
+        worldEl.id = 'worldA';
+        document.body.appendChild(worldEl);
+        
+        // create world
+        var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
+          width: worldWidth,
+          height: worldHeight,
+          resolution: resolution / 2,
+          backgroundColor: [document.querySelector('#bgColorRed').value,
+            document.querySelector('#bgColorGreen').value,
+            document.querySelector('#bgColorBlue').value],
+          noMenu: true,
+          container: bitShadowContainer
+        });
+
+        /**
+         * Create a new BitShadowMachine system.
+         */
+        BitShadowMachine.System.init(function() {
+
+          anim = this.add('Anim', {
+            location: new BitShadowMachine.Vector(1, 1),
+            frames: data
+          });
+          
+        }, worldA);
+
+        document.removeEventListener('keyup', handleKeyUp);
+        document.addEventListener('keyup', handleKeyUp);
+        
+        frameRateLabel.classList.remove('disabled');
+        frameRateSlider.removeAttribute('disabled');
+        frameRateSlider.removeEventListener('change', handleSliderChange);
+        frameRateSlider.addEventListener('change', handleSliderChange);
         
       });
 
     </script>
-  
+
   </body>
 </html>
