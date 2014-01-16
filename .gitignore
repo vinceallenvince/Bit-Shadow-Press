@@ -5,3 +5,5 @@ node_modules
 *.DS_Store
 *.swp
 public/frames.js
+public/scripts/BitShadowMachine*
+public/css/BitShadowMachine*
