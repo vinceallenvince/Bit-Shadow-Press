@@ -105,7 +105,7 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
           x: Math.floor((x + originOffsetX) / resolution * 2),
           y: Math.floor((y + originOffsetY) / resolution * 2),
           color: [red, green, blue],
-          opacity: parseFloat(this.map(alpha, 0, 255, 0, 1).toPrecision(2)),
+          opacity: parseFloat(PixelPress.map(alpha, 0, 255, 0, 1).toPrecision(2)),
           scale: 1
         });
       }
@@ -142,7 +142,7 @@ PixelPress.prototype.log = function(msg) {
  * @param {number} max2 Upper bound of the value's target range.
  * @returns {number} A number.
  */
-PixelPress.prototype.map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
+PixelPress.map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
   var unitratio = (value - min1) / (max1 - min1);
   return (unitratio * (max2 - min2)) + min2;
 };

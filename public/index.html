@@ -94,7 +94,7 @@
                min='0'
                max='30'
                step='1' 
-               value='3'
+               value='27'
                disabled='disabled'/>
       </fieldset>
     </section>
@@ -136,8 +136,12 @@
         }
       };
       
+      var readSlider = function(e) {
+        anim.frameDuration = PixelPress.map(e.target.value, 0, 30, 30, 0);
+      };
+      
       var handleSliderChange = function(e) {
-        anim.frameDuration = e.target.value;
+        readSlider(e);
       };
       
       socket.on('connected', function() {
