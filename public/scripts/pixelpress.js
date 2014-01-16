@@ -105,7 +105,7 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
           x: Math.floor((x + originOffsetX) / resolution * 2),
           y: Math.floor((y + originOffsetY) / resolution * 2),
           color: [red, green, blue],
-          opacity: this.map(alpha, 0, 255, 0, 1),
+          opacity: parseFloat(this.map(alpha, 0, 255, 0, 1).toPrecision(2)),
           scale: 1
         });
       }

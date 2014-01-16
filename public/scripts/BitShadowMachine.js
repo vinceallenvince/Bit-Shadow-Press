@@ -1,4 +1,4 @@
-/*! BitShadowMachine v2.0.10 - 2014-01-12 03:01:19 
+/*! BitShadowMachine v2.0.11 - 2014-01-16 12:01:42 
  *  Vince Allen 
  *  Brooklyn, NY 
  *  vince@vinceallen.com 
@@ -1938,9 +1938,9 @@ function World(opt_el, opt_options) {
       container.appendChild(this.menu);
       this.menuHidden = false;
     }
-
+    
     document.body.appendChild(container);
-
+    
   }
 
   /**
@@ -2072,7 +2072,13 @@ Anim.prototype.init = function(options) {
   this.loop = options.loop !== 'undefined' ? true : options.loop;
 
   this.frameDuration = options.frameDuration || 3;
-  this.frameCount = 0;
+  
+  /**
+   * The internal frame count that is checked against
+   * frameDuration to see if we should advance the frame.
+   * @private
+   */
+  this._frameCount = 0;
 };
 
 
@@ -2081,11 +2087,11 @@ Anim.prototype.init = function(options) {
  */
 Anim.prototype.step = function() {
 
-  if (this.frameCount < this.frameDuration) {
-    this.frameCount++;
+  if (this._frameCount < this.frameDuration) {
+    this._frameCount++;
   } else {
     this.advanceFrame();
-    this.frameCount = 0;
+    this._frameCount = 0;
   }
 };
 
@@ -2112,7 +2118,8 @@ Anim.prototype.advanceFrame = function() {
       BitShadowMachine.System.add('AnimUnit', {
         location: new BitShadowMachine.Vector(this.location.x + item.x, this.location.y + item.y),
         color: item.color,
-        scale: 1
+        scale: 1,
+        opacity: item.opacity
       });
     }
   }

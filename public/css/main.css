@@ -61,7 +61,7 @@ body {
   color: #88939a;
 }
 
-form fieldset {
+fieldset {
   display: inline-block;
   margin: 0;
   padding: 10px 0 10px 10px;
@@ -75,7 +75,7 @@ form fieldset.form-actions {
 form fieldset.check {
   padding-left: 20%;
   }
-form fieldset label {
+label {
   float: none;
   width: 20%;
   margin: 4px 4px 5px 0;
@@ -153,6 +153,25 @@ form input[type="submit"]:active {
   border: 1px solid #ccc;
   background: #eee;
   }
+
+label.disabled {
+  color: #bbb;
+}
+
+.vertical-center label {
+  width: 100px; 
+}
+
+.vertical-center label, .vertical-center .rate-slider {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0; padding: 0;
+}
+
+h1, h2, h3, h4, h5, label {
+  font-family: "ff-din-web",sans-serif;
+}
+
 @media screen and (max-width: 600px) {
   form fieldset label {
     display: block;
@@ -176,6 +195,3 @@ form input[type="submit"]:active {
     }
   }
 
-h1, h2, h3, h4, h5, label {
-  font-family: "ff-din-web",sans-serif;
-}

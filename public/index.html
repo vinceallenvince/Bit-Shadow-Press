@@ -3,7 +3,7 @@
     <link rel='stylesheet' href='css/main.css' />
     <link rel='stylesheet' href='css/BitShadowMachine.min.css' />
     <link rel='stylesheet' href='css/BitShadowPress.css' />
-    <script src='scripts/BitShadowMachine.min.js'></script>
+    <script src='scripts/BitShadowMachine.js'></script>
     <script type="text/javascript" src="//use.typekit.net/jmz6fpn.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   </head>
@@ -85,8 +85,22 @@
       </form>
     </section>
 
-    <div id='worldA'></div>
-
+    <section class='container'>
+      <fieldset class='vertical-center'>
+        <label id='frameRateLabel' for='frameRate' class='label disabled'>Frame rate</label>
+        <input id='frameRateSlider'
+               class='rate-slider'
+               type='range'
+               min='0'
+               max='30'
+               step='1' 
+               value='3'
+               disabled='disabled'/>
+      </fieldset>
+    </section>
+    
+    <div id='bitShadowContainer'></div>
+    
     <script src='scripts/fsupload.js'></script>
     <script src='scripts/pixelpress.js'></script>
     <script src='http://localhost:1337/socket.io/socket.io.js'></script>
@@ -94,8 +108,38 @@
 
       var socket = io.connect('http://localhost:1337'),
           fileInput = document.getElementById('imageFileInput'),
-          resolution, worldWidth, worldHeight;
+          bitShadowContainer = document.getElementById('bitShadowContainer'),
+          frameRateLabel = document.getElementById('frameRateLabel'),
+          frameRateSlider = document.getElementById('frameRateSlider'),
+          resolution, worldWidth, worldHeight, anim = {};
+      
+      var decreaseFrameDuration = function() {
+        if (anim.frameDuration - 1 > -1) {
+          anim.frameDuration--;
+        }
+      };
 
+      var increaseFrameDuration = function() {
+        if (anim.frameDuration + 1 < 100) {
+          anim.frameDuration++;
+        }
+      };
+      
+      var handleKeyUp = function(e) {
+        switch(e.keyCode) {
+          case 38:
+            decreaseFrameDuration();
+            break;
+          case 40:
+            increaseFrameDuration();
+            break;                
+        }
+      };
+      
+      var handleSliderChange = function(e) {
+        anim.frameDuration = e.target.value;
+      };
+      
       socket.on('connected', function() {
 
         var theCanvas = document.getElementById('theCanvas');
@@ -137,9 +181,20 @@
       });
 
       socket.on('dataSet', function(data) {
+              
+        // check if an animation already exists
+        if (BitShadowMachine.System.firstWorld()) {
+          // if not, destroy the existing system
+          // this should remove the world element
+          BitShadowMachine.System._destroySystem();
+        }
         
-        // create Bit-Shadow-Anim here
+        // create the world container
+        var worldEl = document.createElement('div');
+        worldEl.id = 'worldA';
+        document.body.appendChild(worldEl);
         
+        // create world
         var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
           width: worldWidth,
           height: worldHeight,
@@ -147,7 +202,8 @@
           backgroundColor: [document.querySelector('#bgColorRed').value,
             document.querySelector('#bgColorGreen').value,
             document.querySelector('#bgColorBlue').value],
-          noMenu: true
+          noMenu: true,
+          container: bitShadowContainer
         });
 
         /**
@@ -155,13 +211,21 @@
          */
         BitShadowMachine.System.init(function() {
 
-          var anim = this.add('Anim', {
+          anim = this.add('Anim', {
             location: new BitShadowMachine.Vector(1, 1),
             frames: data
           });
-
+          
         }, worldA);
 
+        document.removeEventListener('keyup', handleKeyUp);
+        document.addEventListener('keyup', handleKeyUp);
+        
+        frameRateLabel.classList.remove('disabled');
+        frameRateSlider.removeAttribute('disabled');
+        frameRateSlider.removeEventListener('change', handleSliderChange);
+        frameRateSlider.addEventListener('change', handleSliderChange);
+        
       });
 
     </script>
