@@ -10,7 +10,7 @@
   <body>
 
     <canvas id='theCanvas' width='1000px' height='1000px'></canvas>
-    
+
     <section class='container'>
       <h1 class='title'>Bit-Shadow <span class='title-hilite'>Press</span></h1>
       <div class='instructions'>Upload a series of images and convert them to a Bit-Shadow Machine animation.</div>
@@ -37,11 +37,44 @@
         <fieldset>
           <label for='origin'>Resolution</label>
           <select id='imageResolution' name='resolution'>
-            <option value='1'>1:1</option>
             <option value='2'>1:2</option>
             <option value='4'>1:4</option>
             <option value='8' selected>1:8</option>
             <option value='16'>1:16</option>
+            <option value='32'>1:32</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>R</label>
+          <select id='bgColorRed' name='bgColorRed'>
+            <option value='10'>10</option>
+            <option value='100' selected>100</option>
+            <option value='150'>150</option>
+            <option value='200'>200</option>
+            <option value='255'>255</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>G</label>
+          <select id='bgColorGreen' name='bgColorGreen'>
+            <option value='10'>10</option>
+            <option value='100'>100</option>
+            <option value='150' selected>150</option>
+            <option value='200'>200</option>
+            <option value='255'>255</option>
+          </select>
+        </fieldset>
+
+        <fieldset>
+          <label for='origin'>B</label>
+          <select id='bgColorBlue' name='bgColorBlue'>
+            <option value='10'>10</option>
+            <option value='100'>100</option>
+            <option value='150'>150</option>
+            <option value='200' selected>200</option>
+            <option value='255'>255</option>
           </select>
         </fieldset>
 
@@ -71,7 +104,7 @@
           context: theCanvas.getContext('2d'),
           debug: true
         });
-        
+
         fileInput.removeAttribute('disabled');
 
         var fsUpload = new FSUpload(
@@ -82,7 +115,7 @@
               originY = document.querySelector('#imageOriginY').value,
               fileURL = result.fileURL,
               totalFiles = result.totalFiles;
-            
+
             resolution = document.querySelector('#imageResolution').value;
 
             pixelPress.init({
@@ -110,8 +143,10 @@
         var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
           width: worldWidth,
           height: worldHeight,
-          resolution: resolution,
-          backgroundColor: [0, 0, 0],
+          resolution: resolution / 2,
+          backgroundColor: [document.querySelector('#bgColorRed').value,
+            document.querySelector('#bgColorGreen').value,
+            document.querySelector('#bgColorBlue').value],
           noMenu: true
         });
 
@@ -120,17 +155,11 @@
          */
         BitShadowMachine.System.init(function() {
 
-          var i, max;
-
           var anim = this.add('Anim', {
             location: new BitShadowMachine.Vector(1, 1),
             frames: data
           });
 
-          /*this.add('AnimUnit', {
-            location: new BitShadowMachine.Vector(1, 1)
-          });*/
-          
         }, worldA);
 
       });

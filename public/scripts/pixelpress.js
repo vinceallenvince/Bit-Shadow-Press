@@ -101,8 +101,8 @@ PixelPress.prototype.processImageData = function(imgData, resolution) {
       // do not add transparent blocks
       if (alpha !== 0 || (x + originOffsetX === 0 && y + originOffsetY === 0)) { // always add the first pixel block
         items.push({
-          x: Math.floor((x + originOffsetX) / resolution),
-          y: Math.floor((y + originOffsetY) / resolution),
+          x: Math.floor((x + originOffsetX) / resolution * 2),
+          y: Math.floor((y + originOffsetY) / resolution * 2),
           color: [red, green, blue],
           opacity: this.map(alpha, 0, 255, 0, 1),
           scale: 1
