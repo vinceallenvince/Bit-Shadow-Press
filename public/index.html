@@ -111,8 +111,10 @@
           bitShadowContainer = document.getElementById('bitShadowContainer'),
           frameRateLabel = document.getElementById('frameRateLabel'),
           frameRateSlider = document.getElementById('frameRateSlider'),
+          sliderMin = frameRateSlider.min,
+          sliderMax = frameRateSlider.max,
           resolution, worldWidth, worldHeight, anim = {};
-      
+
       var decreaseFrameDuration = function() {
         if (anim.frameDuration - 1 > -1) {
           anim.frameDuration--;
@@ -136,12 +138,12 @@
         }
       };
       
-      var readSlider = function(e) {
-        anim.frameDuration = PixelPress.map(e.target.value, 0, 30, 30, 0);
+      var readSlider = function(val) {
+        anim.frameDuration = PixelPress.map(val, 0, 30, 30, 0);
       };
       
       var handleSliderChange = function(e) {
-        readSlider(e);
+        readSlider(e.target.value);
       };
       
       socket.on('connected', function() {
@@ -230,6 +232,11 @@
         frameRateSlider.removeEventListener('change', handleSliderChange);
         frameRateSlider.addEventListener('change', handleSliderChange);
         
+      });
+      
+      socket.on('potFrameRate', function(val) {
+        frameRateSlider.value = PixelPress.map(val, 0, 960, 0, 30);
+        readSlider(frameRateSlider.value);
       });
 
     </script>

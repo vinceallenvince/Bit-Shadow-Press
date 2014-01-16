@@ -17,6 +17,7 @@
   "engine": "0.6.x",
   "dependencies": {
     "connect": "2.9.x",
-    "socket.io": "0.9.x"
+    "socket.io": "0.9.x",
+    "johnny-five": "~0.7.12"
   }
 }
