@@ -5,6 +5,11 @@ var connect = require('connect'),
 
 var emitter = new EventEmitter();
 
+var map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
+  var unitratio = (value - min1) / (max1 - min1);
+  return (unitratio * (max2 - min2)) + min2;
+};
+
 connect(connect.static(__dirname + '/public')).listen(8000);
 
 io.sockets.on('connection', function(socket) {
@@ -40,7 +45,9 @@ var five = require('johnny-five'),
     board = new five.Board();
 
 board.on('ready', function() {
-
+  
+  var potentiometer, led;
+  
    // Create a new `potentiometer` hardware instance.
   potentiometer = new five.Sensor({
     pin: 'A2',
@@ -56,7 +63,17 @@ board.on('ready', function() {
 
   // "data" get the current reading from the potentiometer
   potentiometer.on('data', function() {
+    led.brightness(map(this.value, 0, 1023, 0, 255));
     emitter.emit('potFrameRate', this.value);
   });
+  
+  // Create a standard `led` hardware instance
+  var led = new five.Led({
+    pin: 9
+  });
+
+  // "on" turns the led _on_
+  led.on();
+  
 
 });
