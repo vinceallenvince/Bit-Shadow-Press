@@ -63,7 +63,7 @@ board.on('ready', function() {
 
   // "data" get the current reading from the potentiometer
   potentiometer.on('data', function() {
-    led.brightness(map(this.value, 0, 1023, 0, 255));
+    led.brightness(map(this.value, 0, 1023, 10, 50));
     emitter.emit('potFrameRate', this.value);
   });
   
