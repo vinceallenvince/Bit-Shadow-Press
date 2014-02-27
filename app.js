@@ -31,7 +31,7 @@ io.sockets.on('connection', function(socket) {
       socket.emit('dataSet', data);
     });
   });
-  
+
   // control frame rate slider
   emitter.on('potFrameRate', function(data) {
     socket.emit('potFrameRate', data);
@@ -45,9 +45,9 @@ var five = require('johnny-five'),
     board = new five.Board();
 
 board.on('ready', function() {
-  
+
   var potentiometer, led;
-  
+
    // Create a new `potentiometer` hardware instance.
   potentiometer = new five.Sensor({
     pin: 'A2',
@@ -63,10 +63,10 @@ board.on('ready', function() {
 
   // "data" get the current reading from the potentiometer
   potentiometer.on('data', function() {
-    led.brightness(map(this.value, 0, 1023, 10, 50));
+    led.brightness(map(this.value, 0, 1023, 0, 10));
     emitter.emit('potFrameRate', this.value);
   });
-  
+
   // Create a standard `led` hardware instance
   var led = new five.Led({
     pin: 9
@@ -74,6 +74,6 @@ board.on('ready', function() {
 
   // "on" turns the led _on_
   led.on();
-  
+
 
 });
