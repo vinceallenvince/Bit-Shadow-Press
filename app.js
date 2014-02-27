@@ -41,6 +41,11 @@ io.sockets.on('connection', function(socket) {
 
 //
 
+process.on('exit', function(code) {
+  console.log('About to exit with code:', code);
+  console.log('The Arduino branch of Bit-Shadow Press requires connecting an Arduino loaded with Standard Firmata to a USB port.')
+});
+
 var five = require('johnny-five'),
     board = new five.Board();
 
