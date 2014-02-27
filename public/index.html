@@ -93,14 +93,20 @@
                type='range'
                min='0'
                max='30'
-               step='1' 
+               step='1'
                value='27'
                disabled='disabled'/>
       </fieldset>
     </section>
-    
+
+    <section class='container'>
+      <fieldset>
+          <label id='frameDataLabel' class='label disabled'>Frame data: </label> <span id='frameDataPath'></span>
+      </fieldset>
+    </section>
+
     <div id='bitShadowContainer'></div>
-    
+
     <script src='scripts/fsupload.js'></script>
     <script src='scripts/pixelpress.js'></script>
     <script src='http://localhost:1337/socket.io/socket.io.js'></script>
@@ -111,6 +117,8 @@
           bitShadowContainer = document.getElementById('bitShadowContainer'),
           frameRateLabel = document.getElementById('frameRateLabel'),
           frameRateSlider = document.getElementById('frameRateSlider'),
+          frameDataLabel = document.getElementById('frameDataLabel'),
+          frameDataPath = document.getElementById('frameDataPath'),
           sliderMin = frameRateSlider.min,
           sliderMax = frameRateSlider.max,
           resolution, worldWidth, worldHeight, anim = {};
@@ -126,7 +134,7 @@
           anim.frameDuration++;
         }
       };
-      
+
       var handleKeyUp = function(e) {
         switch(e.keyCode) {
           case 38:
@@ -134,18 +142,18 @@
             break;
           case 40:
             increaseFrameDuration();
-            break;                
+            break;
         }
       };
-      
+
       var readSlider = function(val) {
         anim.frameDuration = PixelPress.map(val, 0, 30, 30, 0);
       };
-      
+
       var handleSliderChange = function(e) {
         readSlider(e.target.value);
       };
-      
+
       socket.on('connected', function() {
 
         var theCanvas = document.getElementById('theCanvas');
@@ -187,19 +195,19 @@
       });
 
       socket.on('dataSet', function(data) {
-              
+
         // check if an animation already exists
         if (BitShadowMachine.System.firstWorld()) {
           // if not, destroy the existing system
           // this should remove the world element
           BitShadowMachine.System._destroySystem();
         }
-        
+
         // create the world container
         var worldEl = document.createElement('div');
         worldEl.id = 'worldA';
         document.body.appendChild(worldEl);
-        
+
         // create world
         var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
           width: worldWidth,
@@ -221,19 +229,30 @@
             location: new BitShadowMachine.Vector(1, 1),
             frames: data
           });
-          
+
         }, worldA);
 
         document.removeEventListener('keyup', handleKeyUp);
         document.addEventListener('keyup', handleKeyUp);
-        
+
+        // enables slider and label
         frameRateLabel.classList.remove('disabled');
         frameRateSlider.removeAttribute('disabled');
         frameRateSlider.removeEventListener('change', handleSliderChange);
         frameRateSlider.addEventListener('change', handleSliderChange);
-        
+
+        // enables frame data label and appends link to frames.js
+        frameDataLabel.classList.remove('disabled');
+        var dataPathPrefix = document.createTextNode('Your frame data '),
+            dataPathAnchor = document.createElement('a');
+        dataPathAnchor.href = '/frames.js';
+
+        dataPathAnchor.appendChild(document.createTextNode('is ready.'));
+        frameDataPath.appendChild(dataPathPrefix);
+        frameDataPath.appendChild(dataPathAnchor);
+
       });
-      
+
       socket.on('potFrameRate', function(val) {
         frameRateSlider.value = PixelPress.map(val, 0, 960, 0, 30);
         readSlider(frameRateSlider.value);
