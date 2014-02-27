@@ -30,6 +30,10 @@ body {
   font-family: Helvetica, sans-serif;
 }
 
+a {
+  color: #e5ad40;
+}
+
 #theCanvas {
   position: absolute;
   top: -5000px; left: -5000px;
@@ -159,7 +163,7 @@ label.disabled {
 }
 
 .vertical-center label {
-  width: 100px; 
+  width: 100px;
 }
 
 .vertical-center label, .vertical-center .rate-slider {
