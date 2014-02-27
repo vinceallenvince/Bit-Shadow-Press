@@ -21,7 +21,7 @@ io.sockets.on('connection', function(socket) {
     var stream;
 
     if (data) {
-    	stream = fs.createWriteStream(__dirname + '/public/frames.js');
+      stream = fs.createWriteStream(__dirname + '/public/frames.js');
     } else {
       return;
     }
@@ -63,7 +63,7 @@ board.on('ready', function() {
 
   // "data" get the current reading from the potentiometer
   potentiometer.on('data', function() {
-    led.brightness(map(this.value, 0, 1023, 0, 10));
+    led.brightness(map(this.value, 0, 1023, 5, 50));
     emitter.emit('potFrameRate', this.value);
   });
 
