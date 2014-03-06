@@ -25,3 +25,5 @@ node app
 The utility uses the HTML 5 Filesystem API which means you need run it in [Google Chrome](http://www.google.com/chrome/).
 
 Open Chrome and point it to http://localhost:8080/
+
+![Runing Bit-Shadow Press](http://foldi.github.io/Bit-Shadow-Press/images/bsp-screen001.jpg "Bit-Shadow Press")
