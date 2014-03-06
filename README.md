@@ -39,6 +39,54 @@ Upload your files via the "Choose files" button. You should see something like t
 
 ![Uploading files](http://foldi.github.io/Bit-Shadow-Press/images/bsp-screen002.jpg "Bit-Shadow Press")
 
+You can use the Frame rate slider to adjust the timing of your animation.
 
+Click 'is ready' to view your frame data.
 
+## Use with Bit-Shadow Machine
 
+Create a folder for your Bit-Shadow Machine animation and create a new file called 'frames.js' in the root. Add the frame date from above and save the file.
+
+Place the lastest [js](https://github.com/foldi/Bit-Shadow-Machine/blob/master/release/BitShadowMachine.min.js) and [css](https://github.com/foldi/Bit-Shadow-Machine/blob/master/release/BitShadowMachine.min.css) files from Bit-Shadow Machine in a 'scripts' folder.
+
+In the root, create an 'index.html' file in the root and add the following.
+
+```html
+<html>
+  <head>
+    <link rel='stylesheet' href='css/BitShadowMachine.min.css' />
+    <script src='scripts/BitShadowMachine.min.js'></script>
+    <script src='frames.js'></script>
+  </head>
+  <body>
+    <div id='worldA'></div>
+    <script type="text/javascript">
+
+        var worldA = new BitShadowMachine.World(document.getElementById('worldA'), {
+          width: 700,
+          height: 450,
+          resolution: 4,
+          colorMode: 'rgba',
+          backgroundColor: [0, 0, 0],
+          noMenu: true
+        });
+
+        /**
+         * Create a new BitShadowMachine system.
+         */
+        BitShadowMachine.System.init(function() {
+
+          this.add('Anim', {
+            location: new BitShadowMachine.Vector(10, 10),
+            frames: frames,
+            frameDuration: 3
+          });
+
+        }, worldA);
+
+    </script>
+
+  </body>
+</html>
+```
+Open the file in a browser to view the animation. Adjust the location and frameDuration properties to suit your artwork.
