@@ -11,7 +11,7 @@ First, create a pixel art animation using whatever tool you feel comfortable wit
 * Save your files in either .jpg or .png format.
 * You can include transparency in .png 24-bit format.
 
-If you don't have your own files, use the image sequence in the /public/example-frames folder.
+If you don't have your own files, use the image sequence in the [/public/example-frames](https://github.com/foldi/Bit-Shadow-Press/tree/master/public/example-frames) folder.
 
 Second, clone this repo, run npm install and run the app.
 
