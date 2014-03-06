@@ -10,7 +10,7 @@ var map = function(value, min1, max1, min2, max2) { // returns a new value relat
   return (unitratio * (max2 - min2)) + min2;
 };
 
-connect(connect.static(__dirname + '/public')).listen(8000);
+connect(connect.static(__dirname + '/public')).listen(8080);
 
 io.sockets.on('connection', function(socket) {
 
