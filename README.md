@@ -41,13 +41,13 @@ Upload your files via the "Choose files" button. You should see something like t
 
 You can use the Frame rate slider to adjust the timing of your animation.
 
-Click 'is ready' to view your frame data.
+Click the link at 'Your frame data is ready' to view your frame data.
 
-## Use with Bit-Shadow Machine
+## View your animation
 
-Create a folder for your Bit-Shadow Machine animation and create a new file called 'frames.js' in the root. Add the frame date from above and save the file.
+Create a folder for your Bit-Shadow Machine animation. In the root, create a 'frame.js' file and add the frame data from above. Save the file.
 
-Place the lastest [js](https://github.com/foldi/Bit-Shadow-Machine/blob/master/release/BitShadowMachine.min.js) and [css](https://github.com/foldi/Bit-Shadow-Machine/blob/master/release/BitShadowMachine.min.css) files from Bit-Shadow Machine in a 'scripts' folder.
+Place the lastest [js](https://github.com/foldi/Bit-Shadow-Machine/blob/master/release/BitShadowMachine.min.js) and [css](https://github.com/foldi/Bit-Shadow-Machine/blob/master/release/BitShadowMachine.min.css) files from Bit-Shadow Machine in 'scripts' and 'css' folders respectively.
 
 In the root, create an 'index.html' file in the root and add the following.
 
