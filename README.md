@@ -27,3 +27,18 @@ The utility uses the HTML 5 Filesystem API which means you need run it in [Googl
 Open Chrome and point it to http://localhost:8080/
 
 ![Runing Bit-Shadow Press](http://foldi.github.io/Bit-Shadow-Press/images/bsp-screen001.jpg "Bit-Shadow Press")
+
+The default options should work fine. However, you can adjust them to update the following details.
+
+* OriginX - The 2D horizontal origin of your artwork. Usually this is the left edge.
+* OriginY - The 2D vertical origin of your artwork. Usually this is the top edge.
+* Resolution - If you create pixel art that uses 8px X 8px units, set this to 1:8. There are options for 2, 4, 8, 16 and 32 pixel dimensions.
+* RGB - If your artwork includes transparency, this color will show through the transparency.
+
+Upload your files via the "Choose files" button. You should see something like this.
+
+![Uploading files](http://foldi.github.io/Bit-Shadow-Press/images/bsp-screen002.jpg "Bit-Shadow Press")
+
+
+
+
